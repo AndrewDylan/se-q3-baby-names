@@ -48,9 +48,11 @@ def extract_names(filename):
     names = []
     f = open(filename, encoding='utf-8')
     contents = f.read()
-    print(contents)
     
     names = re.findall(r'<td>(\d+)</td><td>(\w+)</td><td>(\w+)</td>', contents)
+    year = re.findall(r'Popularity\sin\s(\d\d\d\d)', contents)
+
+    print(year)
 
 
     return names
