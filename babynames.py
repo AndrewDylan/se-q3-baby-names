@@ -45,17 +45,26 @@ def extract_names(filename):
     the name-rank strings in alphabetical order.
     ['2006', 'Aaliyah 91', 'Aaron 57', 'Abagail 895', ...]
     """
-    names = []
     f = open(filename, encoding='utf-8')
     contents = f.read()
-    
+
     names = re.findall(r'<td>(\d+)</td><td>(\w+)</td><td>(\w+)</td>', contents)
     year = re.findall(r'Popularity\sin\s(\d\d\d\d)', contents)
 
-    print(year)
+    namesList = [year[0]]
+    namesDict = {}
 
+    for rank in names:
+        if rank[1] not in namesDict:
+            namesDict[rank[1]] = rank[0]
+        if rank[2] not in namesDict:
+            namesDict[rank[2]] = rank[0]
 
-    return names
+    for name in namesDict.items():
+        namesList.append(name[0] + ' ' + name[1])
+    namesList.sort()
+
+    return namesList
 
 
 def create_parser():
@@ -84,7 +93,7 @@ def main(args):
 
     file_list = ns.files
     # option flag
-    create_summary = ns.summaryfile
+    # create_summary = ns.summaryfile
 
     # For each filename, call `extract_names()` with that single file.
     # Format the resulting list as a vertical list (separated by newline \n).
@@ -93,7 +102,16 @@ def main(args):
 
     # +++your code here+++
     for filename in file_list:
-        extract_names(filename)
+        ranking = extract_names(filename)
+        text = '\n'.join(ranking)
+
+        if ns.summaryfile:
+            f = open('baby' + ranking[0] + '.html.summary', 'w')
+            f.write(text)
+
+        if ns.summaryfile is False:
+            print(text)
+
 
 if __name__ == '__main__':
     main(sys.argv[1:])
